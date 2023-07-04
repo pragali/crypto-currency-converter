@@ -9,12 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.sql.SQLOutput;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Ipapi {
 
@@ -28,15 +24,19 @@ public class Ipapi {
     @Value("${ip-api.url}")
     static String ipApiEndpoint;
 
+    private static final String IPV4_PATTERN =
+            "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}" +
+                    "([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$";
+
     public static void main(String[] args) {
         try {
-           getIPAddress();
+           getGeoLocation();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static String getIPAddress() throws IOException {
+    public static String getGeoLocation() throws IOException {
         URL ipapi = new URL("https://ipapi.co/87.123.247.221/json");
 
         URLConnection c = ipapi.openConnection();
@@ -64,10 +64,6 @@ public class Ipapi {
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         GeoLocation location = objectMapper.readValue(json,GeoLocation.class);
         System.out.println(location);
-
-
-
-
 
     }
 
