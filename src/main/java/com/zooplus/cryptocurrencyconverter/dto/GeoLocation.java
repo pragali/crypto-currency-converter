@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class GeoLocation {
 
-    private String country;
+    private String country_code;
     private String languages;
     private String currency;
 }
