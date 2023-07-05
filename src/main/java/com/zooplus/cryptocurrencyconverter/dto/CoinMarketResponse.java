@@ -2,16 +2,18 @@ package com.zooplus.cryptocurrencyconverter.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
+import java.util.List;
+
+@lombok.Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GeoLocation {
+public class CoinMarketResponse {
 
-    private String country_code;
-    private String languages;
-    private String currency;
+
+    private Status status;
+
+    private List<Data> data;
 }

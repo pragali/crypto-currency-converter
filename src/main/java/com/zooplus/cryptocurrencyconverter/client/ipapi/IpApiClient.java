@@ -1,43 +1,36 @@
-package com.zooplus.cryptocurrencyconverter;
+package com.zooplus.cryptocurrencyconverter.client.ipapi;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zooplus.cryptocurrencyconverter.dto.GeoLocation;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.sql.SQLOutput;
-import java.util.HashMap;
-import java.util.Map;
+@Component
+public class IpApiClient {
 
-public class Ipapi {
 
-   /* https://ipapi.co/ip/
-    https://ipapi.co/city/
-    https://ipapi.co/country/
-    https://ipapi.co/timezone/
-    https://ipapi.co/languages/
-    https://ipapi.co/currency/*/
+    private final String ipApiEndpoint;
 
-    @Value("${ip-api.url}")
-    static String ipApiEndpoint;
+    private final String format;
 
-    public static void main(String[] args) {
-        try {
-           getIPAddress();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public IpApiClient(@Value("${ip-api.url}") String ipApiEndpoint,  @Value("${ip-api.format}") String format) {
+        this.ipApiEndpoint = ipApiEndpoint;
+        this.format = format;
     }
 
-    public static String getIPAddress() throws IOException {
-        URL ipapi = new URL("https://ipapi.co/87.123.247.221/json");
+
+    public  GeoLocation getGeoLocation(String ipAddress) throws IOException {
+        String url = ipApiEndpoint + ipAddress + "/"+format;
+        //String url = "https://ipapi.co/208.67.222.222/json";
+        URL ipapi = new URL(url);
+
 
         URLConnection c = ipapi.openConnection();
         c.setRequestProperty("User-Agent", "java-ipapi-v1.02");
@@ -50,25 +43,21 @@ public class Ipapi {
         {
             json+=line;
         }
-        objectMapper(json);
+
         reader.close();
 
-        return line;
+        return objectMapper(json);
 
     }
 
-    private static void objectMapper(String json) throws JsonProcessingException {
+    private  GeoLocation objectMapper(String json) throws JsonProcessingException {
         // ObjectMapper instantiation
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         GeoLocation location = objectMapper.readValue(json,GeoLocation.class);
-        System.out.println(location);
-
-
-
-
-
+        //System.out.println(location);
+        return location;
     }
 
 }
